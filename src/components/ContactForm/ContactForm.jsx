@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { nanoid } from 'nanoid';
 import { useDispatch, useSelector } from 'react-redux';
+import { Notify } from 'notiflix';
+
 import { addContact, getContacts } from 'redux/contactsSlice';
 
 import { Form, Label, Input } from './ContactForm.styled';
-import { Notify } from 'notiflix';
 
 const ContactForm = () => {
   const [name, setName] = useState('');
@@ -32,18 +32,16 @@ const ContactForm = () => {
   const onSubmit = event => {
     event.preventDefault();
 
-    const newContact = { id: nanoid(), name, number };
     if (
       contacts.find(
-        ({ name }) =>
-          name.toLocaleLowerCase() === newContact.name.toLocaleLowerCase()
+        contact => contact.name.toLocaleLowerCase() === name.toLocaleLowerCase()
       )
     ) {
-      Notify.failure(`${newContact.name} is already in contacts`);
+      Notify.failure(`${name} is already in contacts`);
       return;
     }
 
-    dispatch(addContact(newContact));
+    dispatch(addContact({ name, number }));
 
     setName('');
     setNumber('');
